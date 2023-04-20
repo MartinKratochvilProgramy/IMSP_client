@@ -1,0 +1,1 @@
+export const serverRoute = "http://localhost:4000"
