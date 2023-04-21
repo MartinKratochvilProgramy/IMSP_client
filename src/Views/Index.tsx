@@ -40,8 +40,8 @@ export const Index = () => {
         <div className='container content'>
             {links.map(link => {
                 return (
-                    <a className='image-link' href={link.linkTo}>
-                        <img src={link.src} alt="website-image" />
+                    <a className='image-link' href={link.linkTo} key={link.linkTo}>
+                        <img src={link.src} alt="website-image" />  
                     </a>
                 )
             })}

@@ -1,21 +1,21 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import Cookies from 'universal-cookie';
-import { Login } from './Views/Login';
+import { Login } from './views/Login';
 import {
 	Routes,
 	Route,
 	useNavigate,
 } from 'react-router-dom';
-import { Register } from './Views/Register';
+import { Register } from './views/Register';
 import { NavBar } from './components/NavBar';
 import './App.css';
-import { Home } from './Views/Home';
+import { Home } from './views/Home';
 import { serverRoute } from './config';
 import { handleErrors } from './utils/handleErrors';
-import { Index } from './Views/Index';
+import { Index } from './views/Index';
 
-export const UsernameContext = React.createContext<any>(null);
+export const DisplayNameContext = React.createContext<any>(null);
 export const IsLoggedInContext = React.createContext<any>(null);
 export const RoleContext = React.createContext<any>(null);
 export const LanguageContext = React.createContext<any>(null);
@@ -23,14 +23,12 @@ export const LanguageContext = React.createContext<any>(null);
 function App() {
 	const cookies = new Cookies();
 
-	const username = JSON.parse(localStorage.getItem('user') || "null");
-	const [usernameState, setUsernameState] = useState(username);
+	const displayName = localStorage.getItem('displayName') || null;
+	const [displayNameState, setDisplayNameState] = useState<null | string>(displayName);
 
 	const [isLoggedInState, setIsLoggedInState] = useState(cookies.get('token') ? true : false);
 
-	let language = (localStorage.getItem('language')) || 'CS'
-	if (language === null) language = "CZ"
-
+	const language = localStorage.getItem('language') || 'CS';
 	const [languageState, setLanguageState] = useState(language);
 
 	const [roleState, setRoleState] = useState<null | string>(null);
@@ -38,10 +36,10 @@ function App() {
 	const navigate = useNavigate();
 
 	function resetUserState() {
-		setUsernameState(null);
+		setDisplayNameState(null);
 		setIsLoggedInState(false);
 		setRoleState(null);
-		localStorage.setItem('user', 'null');
+		localStorage.setItem('displayName', 'null');
 	}
 
 	useEffect(() => {
@@ -56,7 +54,7 @@ function App() {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
-					Authorization: `Basic ${usernameState}:${token}`,
+					Authorization: `Basic ${displayNameState}:${token}`,
 				},
 			})
 				.then(handleErrors)
@@ -76,7 +74,7 @@ function App() {
 	}, []);
 
 	return (
-		<UsernameContext.Provider value={{ username: usernameState, setUsername: setUsernameState }}>
+		<DisplayNameContext.Provider value={{ displayName: displayNameState, setDisplayName: setDisplayNameState }}>
 			<IsLoggedInContext.Provider value={{ isLoggedIn: isLoggedInState, setIsLoggedIn: setIsLoggedInState }}>
 				<RoleContext.Provider value={{ role: roleState, setRole: setRoleState }}>
 					<LanguageContext.Provider value={{ language: languageState, setLanguage: setLanguageState }}>
@@ -91,7 +89,7 @@ function App() {
 					</LanguageContext.Provider>
 				</RoleContext.Provider>
 			</IsLoggedInContext.Provider>
-		</UsernameContext.Provider>
+		</DisplayNameContext.Provider>
 	);
 }
 

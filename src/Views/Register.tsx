@@ -1,37 +1,85 @@
 import React, { useContext, useState } from 'react'
-import { IsLoggedInContext, RoleContext, UsernameContext } from '../App';
+import { DisplayNameContext, IsLoggedInContext, LanguageContext, RoleContext } from '../App';
 import { serverRoute } from '../config';
 import Cookies from 'universal-cookie';
 import { handleErrors } from '../utils/handleErrors';
 import { useNavigate } from 'react-router-dom';
+import "./Form.css"
+import { InputField } from '../components/InputField';
+import { validateEmail } from '../utils/validateEmail';
+import { ErrorField } from '../components/ErrorField';
 
-export function registerInputError(
-  username: string,
-  password: string
-) {
-  if (username === "") return "Missing username";
-  if (password === "") return "Missing password";
-  if (username.length < 3) return "Username should be longer than 3 characters";
-  if (password.length < 6) return "Password should be longer than 6 characters";
+interface Errors {
+  emailErrors: string[],
+  passwordErrors: string[],
+  confirmPasswordErrors: string[],
+  displayNameErrors: string[],
+  serverErrors: string[],
+}
+
+function checkIfRegisterErrorExists(errors: Errors) {
+  for (const error of Object.keys(errors) as (keyof Errors)[]) {
+    if (errors[error].length > 0) {
+      return true;
+    } 
+  }
   return false;
 }
 
 export const Register = () => {
-  const [usernameInput, setUsernameInput] = useState("");
+  const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
-  const [error, setError] = useState<null | string>(null);
+  const [confirmPasswordInput, setConfirmPasswordInput] = useState("");
+  const [displayNameInput, setDisplayNameInput] = useState("");
+  const [errorExists, setErrorExists] = useState(false);
+  const [errors, setErrors] = useState<Errors>({
+    emailErrors: [],
+    passwordErrors: [],
+    confirmPasswordErrors: [],
+    displayNameErrors: [],
+    serverErrors: [],
+  });
 
-  const { setUsername } = useContext(UsernameContext);
-  const { setIsLoggedIn } = useContext(IsLoggedInContext);
-  const { setRole } = useContext(RoleContext);
+  const { setDisplayName } = useContext(DisplayNameContext);
+  const { setIsLoggedIn } = useContext(IsLoggedInContext)
+  const { setRole } = useContext(RoleContext)
+  const { language } = useContext(LanguageContext)
 
   const navigate = useNavigate();
+
+  function handleRegisterErrors (): Errors {
+    const newErrors: Errors = {
+      emailErrors: [],
+      passwordErrors: [],
+      confirmPasswordErrors: [],
+      displayNameErrors: [],
+      serverErrors: [],
+    };
+
+    if (emailInput === "") newErrors.emailErrors.push("Missing e-email value.");
+    if (!validateEmail(emailInput)) newErrors.emailErrors.push("Invalid e-mail value.");
+
+    if (passwordInput === "") newErrors.passwordErrors.push("Missing password.");
+    if (passwordInput.length < 6) newErrors.passwordErrors.push("Password should be longer than 6 characters");
+    
+    if (passwordInput !== confirmPasswordInput) newErrors.confirmPasswordErrors.push("The password and confirmation password do not match.");
+    
+    if (displayNameInput.length === 0) newErrors.displayNameErrors.push("Display name missing.")
+    
+    return newErrors;
+  }
 
   const register = (
     e: React.FormEvent<HTMLFormElement>
   ) => {
-    // send username, password to server to create new user
     e.preventDefault();
+
+    const newErrors = handleRegisterErrors();
+    if (checkIfRegisterErrorExists(newErrors)) {
+      setErrors(newErrors);
+      setErrorExists(true);
+      return;
+    }
 
     fetch(serverRoute + `/register`, {
       method: 'POST',
@@ -39,8 +87,9 @@ export const Register = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username: usernameInput,
+        email: emailInput,
         password: passwordInput,
+        displayName: displayNameInput
       })
     })
       .then(handleErrors)
@@ -50,33 +99,76 @@ export const Register = () => {
         const cookies = new Cookies();
         cookies.set('token', json.token, { path: '/', maxAge: 6000 });
 
-        setUsername(json.username);
+        setDisplayName(json.displayName);
         setRole(json.role);
         setIsLoggedIn(true);
-        localStorage.setItem('user', JSON.stringify(json.username))
+        localStorage.setItem('displayName', JSON.stringify(json.displayName))
 
         navigate("/");
       })
       .catch((error) => {
-        setError(error.message)
+        newErrors.serverErrors = [error.message];
+        setErrors(newErrors);
       })
   };
 
-
   return (
-    <form
-      className='login-container'
-      onSubmit={(e) => register(e)}>
-      <input type="text" onChange={(e) => {
-        setUsernameInput(e.target.value)
-        if (error) setError(null)
-      }} />
-      <input type="password" onChange={(e) => {
-        setPasswordInput(e.target.value)
-        if (error) setError(null)
-      }} />
-      <button type="submit">Register</button>
-      <div>{error}</div>
-    </form>
+    <div className='form-login-container'>
+      <h1 className='form-header'>
+        {language === 'EN' ? 'Register' : 'Registrace'}
+      </h1>
+
+      {errorExists && 
+        <ErrorField errors={errors} />
+      }
+
+      <div className='form-panel-body'>
+        <h3>
+          {language === 'EN' ? 'Create a new account' : 'Vytvoření nového účtu'}
+        </h3>
+        <form
+          onSubmit={(e) => register(e)}
+          className='form-form'>
+
+          <InputField 
+            type={'text'} 
+            labelEN={'E-mail / Login'} 
+            labelCS={'E-mail / Login'} 
+            setterFunc={setEmailInput}  
+          />
+
+          <InputField 
+            type={'password'} 
+            labelEN={'Password'} 
+            labelCS={'Heslo'} 
+            setterFunc={setPasswordInput}  
+          />
+
+          <InputField 
+            type={'password'} 
+            labelEN={'Confirm password'} 
+            labelCS={'Potvrzení hesla'} 
+            setterFunc={setConfirmPasswordInput}  
+          />
+
+          <InputField 
+            type={'text'} 
+            labelEN={'Display name'} 
+            labelCS={'Zobrazované jméno'} 
+            setterFunc={setDisplayNameInput}  
+          />
+
+          <div className='form-login-buttons-container'>
+            <button type="submit" className='btn btn-imsp'>
+              {language === 'EN' ? 'Register' : 'Registrovat'}
+            </button>
+            <button type="submit" className='btn btn-default'>
+              {language === 'EN' ? 'Cancel' : 'Zrušit'}
+            </button>
+          </div>    
+
+        </form>
+      </div>
+    </div>
   )
 }

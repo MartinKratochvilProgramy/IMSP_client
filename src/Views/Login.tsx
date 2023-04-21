@@ -2,128 +2,159 @@ import React, { useState, useContext } from 'react'
 import { serverRoute } from '../config';
 import Cookies from 'universal-cookie';
 import { handleErrors } from '../utils/handleErrors';
-import "./Login.css"
-import { IsLoggedInContext, LanguageContext, RoleContext, UsernameContext } from '../App';
+import { DisplayNameContext, IsLoggedInContext, LanguageContext, RoleContext } from '../App';
 import { useNavigate } from 'react-router-dom';
+import "./Form.css"
+import { InputField } from '../components/InputField';
+import { validateEmail } from '../utils/validateEmail';
+import { ErrorField } from '../components/ErrorField';
 
-export function loginInputError(
-  username: string,
-  password: string
-) {
-  if (username === "") return "Missing username";
-  if (password === "") return "Missing password";
-  return null;
+interface Errors {
+  emailErrors: string[],
+  passwordErrors: string[],
+  serverErrors: string[],
+}
+
+function checkIfLoginErrorExists(errors: Errors) {
+  for (const error of Object.keys(errors) as (keyof Errors)[]) {
+    if (errors[error].length > 0) {
+      return true;
+    } 
+  }
+  return false;
 }
 
 export const Login = () => {
-
-  const [usernameInput, setUsernameInput] = useState("");
+  const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
-  const [error, setError] = useState<null | string>(null);
+  const [errorExists, setErrorExists] = useState(false);
+  const [errors, setErrors] = useState<Errors>({
+    emailErrors: [],
+    passwordErrors: [],
+    serverErrors: [],
+  });
 
-  const { setUsername } = useContext(UsernameContext);
+  const { setDisplayName } = useContext(DisplayNameContext);
   const { setIsLoggedIn } = useContext(IsLoggedInContext)
   const { setRole } = useContext(RoleContext)
   const { language } = useContext(LanguageContext)
 
   const navigate = useNavigate();
 
+  function handleLoginErrors (): Errors {
+    const newErrors: Errors = {
+      emailErrors: [],
+      passwordErrors: [],
+      serverErrors: [],
+    };
+
+    if (emailInput === "") newErrors.emailErrors.push("Missing e-email value.");
+    if (!validateEmail(emailInput)) newErrors.emailErrors.push("Invalid e-mail value.");
+
+    if (passwordInput === "") newErrors.passwordErrors.push("Missing password.");
+    
+    return newErrors;
+  }
+
   function login(
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLAnchorElement>,
   ) {
     e.preventDefault();
 
-    if (!loginInputError(usernameInput, passwordInput)) {
-      // validate login
-      fetch(serverRoute + `/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: usernameInput,
-          password: passwordInput,
-        }),
-      })
-        .then(handleErrors)
-        .then(async (res) => {
-          const json = await res.json();
-
-          const cookies = new Cookies();
-          cookies.set('token', json.token);
-
-          setUsername(json.username);
-          setRole(json.role);
-          setIsLoggedIn(true);
-          localStorage.setItem('user', JSON.stringify(json.username));
-
-          navigate("/");
-        })
-        .catch((error) => {
-          setError(error.message)
-        })
-
-    } else {
-      setError(loginInputError(usernameInput, passwordInput));
+    const newErrors = handleLoginErrors();
+    if (checkIfLoginErrorExists(newErrors)) {
+      setErrors(newErrors);
+      setErrorExists(true);
+      return;
     }
+
+    fetch(serverRoute + `/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: emailInput,
+        password: passwordInput,
+      }),
+    })
+      .then(handleErrors)
+      .then(async (res) => {
+        const json = await res.json();
+
+        const cookies = new Cookies();
+        cookies.set('token', json.token);
+
+        setDisplayName(json.username);
+        setRole(json.role);
+        setIsLoggedIn(true);
+        localStorage.setItem('displayName', JSON.stringify(json.username));
+
+        navigate("/");
+      })
+      .catch((error) => {
+        newErrors.serverErrors = [error.message];
+        setErrors(newErrors);
+      })
   };
 
-  function handleUsernameChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setUsernameInput(e.target.value)
-    if (error) setError(null)
-  }
-
-  function handlePasswordChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setPasswordInput(e.target.value)
-    if (error) setError(null)
-  }
-
   return (
-    <div className='login-container'>
-      <h1 className='header'>
+    <div className='form-login-container'>
+      <h1 className='form-header'>
         {language === 'EN' ? 'Login' : 'Přihlášení'}
       </h1>
 
-      <div className='panel-body'>
+      {errorExists && 
+        <ErrorField errors={errors} />
+      }
+
+      <div className='form-panel-body'>
         <h3>
           {language === 'EN' ? 'Local login' : 'Lokální přihlášení'}
         </h3>
         <form
           onSubmit={(e) => login(e)}
-          className='form'
+          className='form-form'
         >
-          <div className='form-group'>
-            <label htmlFor="Username" className='label'>
-              {language === 'EN' ? 'Username' : 'Uživatelské jméno'}
-            </label>
-            <input
-              type="text"
-              className='input'
-              onChange={(e) => { handleUsernameChange(e) }}
-              placeholder={language === 'EN' ? 'Username' : 'Uživatelské jméno'}
-            />
+
+          <InputField 
+            type={'text'} 
+            labelEN={'Username'} 
+            labelCS={'Uživatelské jméno'} 
+            setterFunc={setEmailInput}  
+          />  
+
+          <InputField 
+            type={'password'} 
+            labelEN={'Password'} 
+            labelCS={'Heslo'} 
+            setterFunc={setPasswordInput}  
+          />  
+
+          <label htmlFor="Rremember login" className='form-remember-login-container'>
+            <input type="checkbox" name="Rremember login" id="Rremember login" />
+            <div className='form-remember-login'>Zapamatovat</div>
+          </label>
+
+          <div className='form-login-buttons-container'>
+            <button type="submit" className='btn btn-imsp'>
+              {language === 'EN' ? 'Login' : 'Přihlásit'}
+            </button>
+            <button type="submit" className='btn btn-default'>
+              {language === 'EN' ? 'Cancel' : 'Zrušit'}
+            </button>
+          </div>    
+
+          <div className='form-links-container'>
+            <a href="/register" className='form-link'>
+              {language === 'EN' ? 'Register as a new user?' : 'Zaregistrovat nového uživatele?'}
+            </a>     
+            <a href="/register" className='form-link'>
+              {language === 'EN' ? 'Forgot your password?' : 'Zapomenuté heslo?'}
+            </a>     
           </div>
-
-          <div className='form-group'>
-            <label htmlFor="Password" className='label'>
-              {language === 'EN' ? 'Password' : 'Heslo'}
-            </label>
-            <input
-              type="password"
-              className='input'
-              onChange={(e) => { handlePasswordChange(e) }}
-              placeholder={language === 'EN' ? 'Password' : 'Heslo'}
-            />
-          </div>
-
-
-
-
-          <button type="submit">Login</button>
-          <div>{error}</div>
         </form>
       </div>
-
     </div>
   )
 }

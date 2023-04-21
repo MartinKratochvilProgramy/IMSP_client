@@ -1,7 +1,11 @@
 :root {
     --primary-red: rgba(204, 32, 49, 1);
-    --darker-gray: rgb(221, 221, 221);
-    --lighter-gray: rgb(245, 245, 245);
+    --primary-dark-red: #b11c2a;
+    --primary-light-red: #f2dede;
+    --light-gray: rgb(245, 245, 245);
+    --dark-gray: rgb(221, 221, 221);
+    --light-blue: #337ab7;
+    --dark-blue: #476187;
     font-family: sans-serif;
 }
 

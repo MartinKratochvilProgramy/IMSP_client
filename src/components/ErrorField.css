@@ -1,0 +1,17 @@
+.form-errors {
+    background-color: var(--primary-light-red);
+    margin-bottom: 18px;
+    padding: 8px 14px;
+    color: #a94442;
+    border-radius: 4px;
+}
+
+.form-errors-list {
+    margin: 0;
+}
+
+.form-errors-header {
+    color: #a94442;
+    font-size: 14px;
+    margin: 0;
+}
