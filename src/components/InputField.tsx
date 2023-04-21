@@ -7,13 +7,15 @@ interface Props {
     labelEN: string;
     labelCS: string;
     setterFunc: (e: string) => void;
+    errors: string[];
 }
 
 export const InputField: React.FC<Props> = ({
     type,
     labelEN,
     labelCS,
-    setterFunc
+    setterFunc,
+    errors
 }) => {
 
     const { language } = useContext(LanguageContext)
@@ -29,6 +31,13 @@ export const InputField: React.FC<Props> = ({
                 onChange={(e) => setterFunc(e.target.value)}
                 placeholder={language === 'EN' ? labelEN : labelCS}
             />
+            {errors.length > 0 && 
+                errors.map(error => {
+                    return (
+                        <div key={error} className='input-field-errors'>{error}</div>
+                    )
+                })
+            }
         </div>
     )
 }

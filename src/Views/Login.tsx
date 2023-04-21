@@ -119,16 +119,18 @@ export const Login = () => {
 
           <InputField 
             type={'text'} 
-            labelEN={'Username'} 
-            labelCS={'Uživatelské jméno'} 
-            setterFunc={setEmailInput}  
+            labelEN={'E-mail / Login'} 
+            labelCS={'E-mail / Login'} 
+            setterFunc={setEmailInput}
+            errors={errors.emailErrors}  
           />  
 
           <InputField 
             type={'password'} 
             labelEN={'Password'} 
             labelCS={'Heslo'} 
-            setterFunc={setPasswordInput}  
+            setterFunc={setPasswordInput}
+            errors={errors.passwordErrors}  
           />  
 
           <label htmlFor="Rremember login" className='form-remember-login-container'>

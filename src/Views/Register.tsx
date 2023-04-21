@@ -135,6 +135,7 @@ export const Register = () => {
             labelEN={'E-mail / Login'} 
             labelCS={'E-mail / Login'} 
             setterFunc={setEmailInput}  
+            errors={errors.emailErrors}
           />
 
           <InputField 
@@ -142,6 +143,7 @@ export const Register = () => {
             labelEN={'Password'} 
             labelCS={'Heslo'} 
             setterFunc={setPasswordInput}  
+            errors={errors.passwordErrors}
           />
 
           <InputField 
@@ -149,13 +151,15 @@ export const Register = () => {
             labelEN={'Confirm password'} 
             labelCS={'Potvrzení hesla'} 
             setterFunc={setConfirmPasswordInput}  
+            errors={errors.confirmPasswordErrors}
           />
 
           <InputField 
             type={'text'} 
             labelEN={'Display name'} 
             labelCS={'Zobrazované jméno'} 
-            setterFunc={setDisplayNameInput}  
+            setterFunc={setDisplayNameInput}
+            errors={errors.displayNameErrors}  
           />
 
           <div className='form-login-buttons-container'>
