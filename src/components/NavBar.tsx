@@ -1,13 +1,15 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
-import { IsLoggedInContext, RoleContext, UsernameContext } from '../App';
+import { IsLoggedInContext, LanguageContext, RoleContext, UsernameContext } from '../App';
+import logo from '../assets/logo.png'
 import './Navbar.css'
 
 export const NavBar = () => {
-  const { username, setUsername } = useContext(UsernameContext)
-  const { isLoggedIn, setIsLoggedIn } = useContext(IsLoggedInContext)
-  const { role, setRole } = useContext(RoleContext)
+  const { setUsername } = useContext(UsernameContext)
+  const { setIsLoggedIn } = useContext(IsLoggedInContext)
+  const { setRole } = useContext(RoleContext)
+  const { language, setLanguage } = useContext(LanguageContext)
 
   const navigate = useNavigate();
 
@@ -22,13 +24,28 @@ export const NavBar = () => {
     cookies.remove('token');
   }
 
+  function handleLanguageChange() {
+    if (language === 'CZ') {
+      const newLanguage = 'EN'
+      setLanguage(newLanguage)
+      localStorage.setItem('language', newLanguage)
+    }
+    if (language === 'EN') {
+      const newLanguage = 'CZ'
+      setLanguage(newLanguage)
+      localStorage.setItem('language', newLanguage)
+    }
+  }
+
   return (
     <div className='navbar'>
-      <div>
-        <a href="/">Home</a>
-        <div>{username} {role}</div>
+      <a href="/">
+        <img src={logo} className='logo' alt="logo" />
+      </a>
+      <div className='links-container'>
+        <div className='link' onClick={handleLanguageChange}>{language === 'EN' ? 'CS' : 'EN'}</div>
+        <a className='link' href="/login">{language === 'EN' ? 'Login' : 'Přihlásit'}</a>
       </div>
-      {isLoggedIn && <button onClick={logout}>Logout</button>}
     </div>
   )
 }

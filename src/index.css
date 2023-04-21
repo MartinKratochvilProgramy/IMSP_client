@@ -1,5 +1,13 @@
 :root {
-    --primary-color: #007bff;
+    --primary-red: rgba(204, 32, 49, 1);
+    --darker-gray: rgb(221, 221, 221);
+    --lighter-gray: rgb(245, 245, 245);
+    font-family: sans-serif;
+}
+
+body {
+    padding: 0;
+    margin: 0;
 }
 
 * {

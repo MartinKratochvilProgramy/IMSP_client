@@ -18,14 +18,21 @@ import { Index } from './Views/Index';
 export const UsernameContext = React.createContext<any>(null);
 export const IsLoggedInContext = React.createContext<any>(null);
 export const RoleContext = React.createContext<any>(null);
-
+export const LanguageContext = React.createContext<any>(null);
 
 function App() {
 	const cookies = new Cookies();
 
 	const username = JSON.parse(localStorage.getItem('user') || "null");
 	const [usernameState, setUsernameState] = useState(username);
+
 	const [isLoggedInState, setIsLoggedInState] = useState(cookies.get('token') ? true : false);
+
+	let language = (localStorage.getItem('language')) || 'CS'
+	if (language === null) language = "CZ"
+
+	const [languageState, setLanguageState] = useState(language);
+
 	const [roleState, setRoleState] = useState<null | string>(null);
 
 	const navigate = useNavigate();
@@ -72,14 +79,16 @@ function App() {
 		<UsernameContext.Provider value={{ username: usernameState, setUsername: setUsernameState }}>
 			<IsLoggedInContext.Provider value={{ isLoggedIn: isLoggedInState, setIsLoggedIn: setIsLoggedInState }}>
 				<RoleContext.Provider value={{ role: roleState, setRole: setRoleState }}>
-					<div className='App'>
-						<NavBar />
-						<Routes>
-							<Route path='/' element={isLoggedInState ? <Home /> : <Index />} />
-							<Route path='/login' element={<Login />} />
-							<Route path='/register' element={<Register />} />
-						</Routes>
-					</div>
+					<LanguageContext.Provider value={{ language: languageState, setLanguage: setLanguageState }}>
+						<div className='App'>
+							<NavBar />
+							<Routes>
+								<Route path='/' element={isLoggedInState ? <Home /> : <Index />} />
+								<Route path='/login' element={<Login />} />
+								<Route path='/register' element={<Register />} />
+							</Routes>
+						</div>
+					</LanguageContext.Provider>
 				</RoleContext.Provider>
 			</IsLoggedInContext.Provider>
 		</UsernameContext.Provider>

@@ -3,7 +3,7 @@ import { serverRoute } from '../config';
 import Cookies from 'universal-cookie';
 import { handleErrors } from '../utils/handleErrors';
 import "./Login.css"
-import { IsLoggedInContext, RoleContext, UsernameContext } from '../App';
+import { IsLoggedInContext, LanguageContext, RoleContext, UsernameContext } from '../App';
 import { useNavigate } from 'react-router-dom';
 
 export function loginInputError(
@@ -24,12 +24,13 @@ export const Login = () => {
   const { setUsername } = useContext(UsernameContext);
   const { setIsLoggedIn } = useContext(IsLoggedInContext)
   const { setRole } = useContext(RoleContext)
+  const { language } = useContext(LanguageContext)
 
   const navigate = useNavigate();
 
-  const login = (
+  function login(
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLAnchorElement>,
-  ) => {
+  ) {
     e.preventDefault();
 
     if (!loginInputError(usernameInput, passwordInput)) {
@@ -67,20 +68,62 @@ export const Login = () => {
     }
   };
 
+  function handleUsernameChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setUsernameInput(e.target.value)
+    if (error) setError(null)
+  }
+
+  function handlePasswordChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setPasswordInput(e.target.value)
+    if (error) setError(null)
+  }
+
   return (
-    <form
-      className='login-container'
-      onSubmit={(e) => login(e)}>
-      <input type="text" onChange={(e) => {
-        setUsernameInput(e.target.value)
-        if (error) setError(null)
-      }} />
-      <input type="password" onChange={(e) => {
-        setPasswordInput(e.target.value)
-        if (error) setError(null)
-      }} />
-      <button type="submit">Login</button>
-      <div>{error}</div>
-    </form>
+    <div className='login-container'>
+      <h1 className='header'>
+        {language === 'EN' ? 'Login' : 'Přihlášení'}
+      </h1>
+
+      <div className='panel-body'>
+        <h3>
+          {language === 'EN' ? 'Local login' : 'Lokální přihlášení'}
+        </h3>
+        <form
+          onSubmit={(e) => login(e)}
+          className='form'
+        >
+          <div className='form-group'>
+            <label htmlFor="Username" className='label'>
+              {language === 'EN' ? 'Username' : 'Uživatelské jméno'}
+            </label>
+            <input
+              type="text"
+              className='input'
+              onChange={(e) => { handleUsernameChange(e) }}
+              placeholder={language === 'EN' ? 'Username' : 'Uživatelské jméno'}
+            />
+          </div>
+
+          <div className='form-group'>
+            <label htmlFor="Password" className='label'>
+              {language === 'EN' ? 'Password' : 'Heslo'}
+            </label>
+            <input
+              type="password"
+              className='input'
+              onChange={(e) => { handlePasswordChange(e) }}
+              placeholder={language === 'EN' ? 'Password' : 'Heslo'}
+            />
+          </div>
+
+
+
+
+          <button type="submit">Login</button>
+          <div>{error}</div>
+        </form>
+      </div>
+
+    </div>
   )
 }

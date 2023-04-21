@@ -1,0 +1,38 @@
+.container {
+    margin: 0px 40px;
+    padding: 0px 15px;
+}
+
+.content {
+    display: flex;
+    flex-flow: wrap;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    max-width: 1040px;
+}
+
+.image-link {
+    margin: 20px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.image-link>img {
+    max-width: 100%;
+    height: auto;
+}
+
+.image-link:hover {
+    box-shadow: 0 0 10px 0 var(--primary-red);
+}
+
+@media (max-width: 700px) {
+    .container {
+        margin: 0;
+    }
+
+    .image-link {
+        margin: 0;
+    }
+}
