@@ -21,7 +21,7 @@ function checkIfRegisterErrorExists(errors: Errors) {
   for (const error of Object.keys(errors) as (keyof Errors)[]) {
     if (errors[error].length > 0) {
       return true;
-    } 
+    }
   }
   return false;
 }
@@ -47,7 +47,7 @@ export const Register = () => {
 
   const navigate = useNavigate();
 
-  function handleRegisterErrors (): Errors {
+  function handleRegisterErrors(): Errors {
     const newErrors: Errors = {
       emailErrors: [],
       passwordErrors: [],
@@ -56,16 +56,28 @@ export const Register = () => {
       serverErrors: [],
     };
 
-    if (emailInput === "") newErrors.emailErrors.push("Missing e-email value.");
-    if (emailInput !== "" && !validateEmail(emailInput)) newErrors.emailErrors.push("Invalid e-mail value.");
+    if (emailInput === "") newErrors.emailErrors.push(
+      language === 'EN' ? "Missing e-email value." : "E-mail je povinný."
+    );
+    if (emailInput !== "" && !validateEmail(emailInput)) newErrors.emailErrors.push(
+      language === 'EN' ? "Invalid e-mail value." : "Chybný e-mail."
+    );
 
-    if (passwordInput === "") newErrors.passwordErrors.push("Missing password.");
-    if (passwordInput.length < 6) newErrors.passwordErrors.push("Password should be longer than 6 characters");
-    
-    if (passwordInput !== confirmPasswordInput) newErrors.confirmPasswordErrors.push("The password and confirmation password do not match.");
-    
-    if (displayNameInput.length === 0) newErrors.displayNameErrors.push("Display name missing.")
-    
+    if (passwordInput === "") newErrors.passwordErrors.push(
+      language === 'EN' ? "Missing password." : "Heslo je povinné."
+    );
+    if (passwordInput.length < 6) newErrors.passwordErrors.push(
+      language === 'EN' ? "Password should be longer than 6 characters" : "Heslo by mělo být delší než 6 znaků."
+    );
+
+    if (passwordInput !== confirmPasswordInput) newErrors.confirmPasswordErrors.push(
+      language === 'EN' ? "The password and confirmation password do not match." : "Hesla se neshodují."
+    );
+
+    if (displayNameInput.length === 0) newErrors.displayNameErrors.push(
+      language === 'EN' ? "Display name missing." : "Chybí uživatelské jméno."
+    )
+
     return newErrors;
   }
 
@@ -118,7 +130,7 @@ export const Register = () => {
         {language === 'EN' ? 'Register' : 'Registrace'}
       </h1>
 
-      {errorExists && 
+      {errorExists &&
         <ErrorField errors={errors} />
       }
 
@@ -130,36 +142,36 @@ export const Register = () => {
           onSubmit={(e) => register(e)}
           className='form-form'>
 
-          <InputField 
-            type={'text'} 
-            labelEN={'E-mail / Login'} 
-            labelCS={'E-mail / Login'} 
-            setterFunc={setEmailInput}  
+          <InputField
+            type={'text'}
+            labelEN={'E-mail / Login'}
+            labelCS={'E-mail / Login'}
+            setterFunc={setEmailInput}
             errors={errors.emailErrors}
           />
 
-          <InputField 
-            type={'password'} 
-            labelEN={'Password'} 
-            labelCS={'Heslo'} 
-            setterFunc={setPasswordInput}  
+          <InputField
+            type={'password'}
+            labelEN={'Password'}
+            labelCS={'Heslo'}
+            setterFunc={setPasswordInput}
             errors={errors.passwordErrors}
           />
 
-          <InputField 
-            type={'password'} 
-            labelEN={'Confirm password'} 
-            labelCS={'Potvrzení hesla'} 
-            setterFunc={setConfirmPasswordInput}  
+          <InputField
+            type={'password'}
+            labelEN={'Confirm password'}
+            labelCS={'Potvrzení hesla'}
+            setterFunc={setConfirmPasswordInput}
             errors={errors.confirmPasswordErrors}
           />
 
-          <InputField 
-            type={'text'} 
-            labelEN={'Display name'} 
-            labelCS={'Zobrazované jméno'} 
+          <InputField
+            type={'text'}
+            labelEN={'Display name'}
+            labelCS={'Zobrazované jméno'}
             setterFunc={setDisplayNameInput}
-            errors={errors.displayNameErrors}  
+            errors={errors.displayNameErrors}
           />
 
           <div className='form-login-buttons-container'>
@@ -169,7 +181,7 @@ export const Register = () => {
             <button type="submit" className='btn btn-default'>
               {language === 'EN' ? 'Cancel' : 'Zrušit'}
             </button>
-          </div>    
+          </div>
 
         </form>
       </div>

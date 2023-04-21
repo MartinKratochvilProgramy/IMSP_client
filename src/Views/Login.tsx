@@ -19,7 +19,7 @@ function checkIfLoginErrorExists(errors: Errors) {
   for (const error of Object.keys(errors) as (keyof Errors)[]) {
     if (errors[error].length > 0) {
       return true;
-    } 
+    }
   }
   return false;
 }
@@ -41,18 +41,23 @@ export const Login = () => {
 
   const navigate = useNavigate();
 
-  function handleLoginErrors (): Errors {
+  function handleLoginErrors(): Errors {
     const newErrors: Errors = {
       emailErrors: [],
       passwordErrors: [],
       serverErrors: [],
     };
 
-    if (emailInput === "") newErrors.emailErrors.push("Missing e-email value.");
-    if (emailInput !== "" && !validateEmail(emailInput)) newErrors.emailErrors.push("Invalid e-mail value.");
+    if (emailInput === "") newErrors.emailErrors.push(
+      language === 'EN' ? "Missing e-email value." : "E-mail je povinný."
+    );
+    if (emailInput !== "" && !validateEmail(emailInput)) newErrors.emailErrors.push(
+      language === 'EN' ? "Invalid e-mail value." : "Chybný e-mail."
+    );
 
-    if (passwordInput === "") newErrors.passwordErrors.push("Missing password.");
-    
+    if (passwordInput === "") newErrors.passwordErrors.push(
+      language === 'EN' ? "Missing password." : "Heslo je povinné.");
+
     return newErrors;
   }
 
@@ -94,7 +99,7 @@ export const Login = () => {
       })
       .catch((error) => {
         console.log(error);
-        
+
         newErrors.serverErrors = [error.message];
         setErrors(newErrors);
       })
@@ -106,7 +111,7 @@ export const Login = () => {
         {language === 'EN' ? 'Login' : 'Přihlášení'}
       </h1>
 
-      {errorExists && 
+      {errorExists &&
         <ErrorField errors={errors} />
       }
 
@@ -119,21 +124,21 @@ export const Login = () => {
           className='form-form'
         >
 
-          <InputField 
-            type={'text'} 
-            labelEN={'E-mail / Login'} 
-            labelCS={'E-mail / Login'} 
+          <InputField
+            type={'text'}
+            labelEN={'E-mail / Login'}
+            labelCS={'E-mail / Login'}
             setterFunc={setEmailInput}
-            errors={errors.emailErrors}  
-          />  
+            errors={errors.emailErrors}
+          />
 
-          <InputField 
-            type={'password'} 
-            labelEN={'Password'} 
-            labelCS={'Heslo'} 
+          <InputField
+            type={'password'}
+            labelEN={'Password'}
+            labelCS={'Heslo'}
             setterFunc={setPasswordInput}
-            errors={errors.passwordErrors}  
-          />  
+            errors={errors.passwordErrors}
+          />
 
           <label htmlFor="Rremember login" className='form-remember-login-container'>
             <input type="checkbox" name="Rremember login" id="Rremember login" />
@@ -147,15 +152,15 @@ export const Login = () => {
             <button type="submit" className='btn btn-default'>
               {language === 'EN' ? 'Cancel' : 'Zrušit'}
             </button>
-          </div>    
+          </div>
 
           <div className='form-links-container'>
             <a href="/register" className='form-link'>
               {language === 'EN' ? 'Register as a new user?' : 'Zaregistrovat nového uživatele?'}
-            </a>     
+            </a>
             <a href="/forgot_password" className='form-link'>
               {language === 'EN' ? 'Forgot your password?' : 'Zapomenuté heslo?'}
-            </a>     
+            </a>
           </div>
         </form>
       </div>
