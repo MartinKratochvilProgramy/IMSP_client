@@ -14,6 +14,7 @@ import { Home } from './views/Home';
 import { serverRoute } from './config';
 import { handleErrors } from './utils/handleErrors';
 import { Index } from './views/Index';
+import { ForgotPassword } from './views/ForgotPassword';
 
 export const DisplayNameContext = React.createContext<any>(null);
 export const IsLoggedInContext = React.createContext<any>(null);
@@ -84,6 +85,7 @@ function App() {
 								<Route path='/' element={isLoggedInState ? <Home /> : <Index />} />
 								<Route path='/login' element={<Login />} />
 								<Route path='/register' element={<Register />} />
+								<Route path='/forgot_password' element={<ForgotPassword />} />
 							</Routes>
 						</div>
 					</LanguageContext.Provider>

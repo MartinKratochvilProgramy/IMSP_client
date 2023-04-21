@@ -49,7 +49,7 @@ export const Login = () => {
     };
 
     if (emailInput === "") newErrors.emailErrors.push("Missing e-email value.");
-    if (!validateEmail(emailInput)) newErrors.emailErrors.push("Invalid e-mail value.");
+    if (emailInput !== "" && !validateEmail(emailInput)) newErrors.emailErrors.push("Invalid e-mail value.");
 
     if (passwordInput === "") newErrors.passwordErrors.push("Missing password.");
     
@@ -93,6 +93,8 @@ export const Login = () => {
         navigate("/");
       })
       .catch((error) => {
+        console.log(error);
+        
         newErrors.serverErrors = [error.message];
         setErrors(newErrors);
       })
@@ -151,7 +153,7 @@ export const Login = () => {
             <a href="/register" className='form-link'>
               {language === 'EN' ? 'Register as a new user?' : 'Zaregistrovat nového uživatele?'}
             </a>     
-            <a href="/register" className='form-link'>
+            <a href="/forgot_password" className='form-link'>
               {language === 'EN' ? 'Forgot your password?' : 'Zapomenuté heslo?'}
             </a>     
           </div>

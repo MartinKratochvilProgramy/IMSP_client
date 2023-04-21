@@ -20,6 +20,8 @@ export const ErrorField: React.FC<Props> = ({ errors }) => {
 
     useEffect(() => {
         const newErrors: string[] = [];
+        console.log(Object.keys(errors));
+        
         for (const errorType of Object.keys(errors) as (keyof Errors)[]) {
             const errs = errors[errorType];
             if (errs) {
@@ -29,7 +31,9 @@ export const ErrorField: React.FC<Props> = ({ errors }) => {
             }
           }
         setErrorsState(newErrors)
-    }, [errors])
+        console.log(newErrors);
+        
+    }, [errors, setErrorsState])
 
     const { language } = useContext(LanguageContext)
 

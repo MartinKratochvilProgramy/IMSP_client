@@ -57,7 +57,7 @@ export const Register = () => {
     };
 
     if (emailInput === "") newErrors.emailErrors.push("Missing e-email value.");
-    if (!validateEmail(emailInput)) newErrors.emailErrors.push("Invalid e-mail value.");
+    if (emailInput !== "" && !validateEmail(emailInput)) newErrors.emailErrors.push("Invalid e-mail value.");
 
     if (passwordInput === "") newErrors.passwordErrors.push("Missing password.");
     if (passwordInput.length < 6) newErrors.passwordErrors.push("Password should be longer than 6 characters");
