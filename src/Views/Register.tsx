@@ -108,6 +108,8 @@ export const Register = () => {
       .then(async (res) => {
         const json = await res.json();
 
+        console.log(json.id);
+
         const cookies = new Cookies();
         cookies.set('token', json.token, { path: '/', maxAge: 6000 });
 
@@ -115,10 +117,10 @@ export const Register = () => {
         setRole(json.role);
         setIsLoggedIn(true);
         localStorage.setItem('displayName', JSON.stringify(json.displayName))
-
-        navigate("/");
       })
       .catch((error) => {
+        console.log(error);
+
         newErrors.serverErrors = [error.message];
         setErrors(newErrors);
       })

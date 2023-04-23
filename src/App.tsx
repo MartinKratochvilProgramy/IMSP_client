@@ -15,6 +15,7 @@ import { serverRoute } from './config';
 import { handleErrors } from './utils/handleErrors';
 import { Index } from './views/Index';
 import { ForgotPassword } from './views/ForgotPassword';
+import { ConfirmEmail } from './views/ConfirmEmail';
 
 export const DisplayNameContext = React.createContext<any>(null);
 export const IsLoggedInContext = React.createContext<any>(null);
@@ -64,7 +65,7 @@ function App() {
 					cookies.set('token', cookie);
 				})
 				.catch(error => {
-					console.log("err ", error);
+					console.log(error);
 
 					resetUserState();
 
@@ -86,6 +87,7 @@ function App() {
 								<Route path='/login' element={<Login />} />
 								<Route path='/register' element={<Register />} />
 								<Route path='/forgot_password' element={<ForgotPassword />} />
+								<Route path='/confirm_email' element={<ConfirmEmail />} />
 							</Routes>
 						</div>
 					</LanguageContext.Provider>
